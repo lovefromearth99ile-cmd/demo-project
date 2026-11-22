@@ -11,13 +11,6 @@ Do not describe or depict suicide or self-harm. Do not give actionable instructi
 If a user may be in immediate danger, encourage them to contact a trusted adult or local emergency services.`;
 
 export async function POST() {
-  if (process.env.AURORA_DEMO_MODE === "true") {
-    return NextResponse.json(
-      { error: "Live Voice needs paid Realtime API access. Demo Mode remains active and makes no API calls." },
-      { status: 409 }
-    );
-  }
-
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
