@@ -26,7 +26,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [configured, setConfigured] = useState<boolean | null>(null);
+  const [serviceMode, setServiceMode] = useState<"checking" | "demo" | "live" | "setup">("checking");
   const [historyReady, setHistoryReady] = useState(false);
   const [notice, setNotice] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -165,9 +165,9 @@ export default function Home() {
         <header className="topbar">
           <div className="breadcrumb"><span>Workspace</span><b>/</b><strong>New conversation</strong></div>
           <div className="top-actions">
-            <div className={`connection ${configured ? "online" : configured === false ? "offline" : ""}`}>
+            <div className={`connection ${serviceMode === "live" ? "online" : serviceMode === "demo" ? "demo" : serviceMode === "setup" ? "offline" : ""}`}>
               <span className="connection-dot" />
-              {configured === null ? "Checking connection" : configured ? "AI connected" : "Setup required"}
+              {serviceMode === "checking" ? "Checking connection" : serviceMode === "demo" ? "Demo mode · no API usage" : serviceMode === "live" ? "AI connected" : "Setup required"}
             </div>
             <a className="github-link" href="https://github.com/lovefromearth99ile-cmd/demo-project/tree/main/aurora-ai" target="_blank" rel="noreferrer">Project ↗</a>
           </div>
@@ -232,7 +232,7 @@ export default function Home() {
               </button>
             </div>
           </form>
-          <p className="disclaimer">Messages are sent to OpenAI to generate replies. Avoid sharing sensitive personal information.</p>
+          <p className="disclaimer">{serviceMode === "demo" ? "Demo Mode uses sample replies only; no live AI model or API credits are used." : "Messages are sent to OpenAI to generate replies. Avoid sharing sensitive personal information."}</p>
         </div>
       </section>
     </main>
