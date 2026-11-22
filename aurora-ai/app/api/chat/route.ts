@@ -48,17 +48,37 @@ function needsSafeRedirect(categories: Record<string, boolean>) {
 const SAFE_REDIRECT =
   "I can’t help with that in detail. I can still offer a safe, age-appropriate overview or help with a different question.";
 
-export async function POST(request: Request) {
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json(
-      {
-        error:
-          "Aurora is not connected yet. Add OPENAI_API_KEY in your hosting environment, then restart or redeploy."
-      },
-      { status: 503 }
-    );
+/**
+ * A small, rule-based local demo. It deliberately does not call an AI service
+ * and must not be presented as a live or fine-tuned language model.
+ */
+function getDemoReply(message: string): string {
+  const text = message.toLowerCase();
+
+  if (/(suicid|self.?harm|hurt myself|kill myself|sexual.*minor|child.*sexual)/i.test(text)) {
+    return "I can’t help with harmful or unsafe content. If this is about something happening to you or someone nearby, please reach out to a trusted person or local emergency service. I can stay with a safe, supportive conversation.";
   }
 
+  if (/\b(hello|hi|hey|introduce|who are you)\b/.test(text) || /হ্যালো|নমস্কার|কে তুমি/.test(text)) {
+    return "নমস্কার! আমি Aurora — তোমার learning ও coding workspace-এর demo assistant। আমি এখন Demo Mode-এ আছি, তাই এই উত্তরটি আগে থেকে তৈরি sample response; live AI model থেকে তৈরি নয়।\n\nআমি এখানে তোমাকে interface পরীক্ষা করতে, Bengali/English chat flow দেখতে এবং sample learning prompts চেষ্টা করতে সাহায্য করতে পারি।";
+  }
+
+  if (/\b(math|mathematics|গণিত|যোগ|addition)\b/.test(text)) {
+    return "চলো একটি ছোট Mathematics demo দেখি।\n\nউদাহরণ: ২ + ৩ = ৫।\n\nএখানে ২ ও ৩ হলো যোগের সংখ্যা, আর ৫ হলো যোগফল। তুমি চাইলে পরের ধাপে Algebra, Geometry বা Calculus-এর জন্য sample prompt পরীক্ষা করতে পারো।\n\nমনে রেখো: এটি rule-based Demo Mode, তাই এটি live AI tutor নয়।";
+  }
+
+  if (/\b(code|coding|program|programming|javascript|python|c language)\b/.test(text)) {
+    return "চলো Coding demo দেখি।\n\nC ভাষায় একটি ছোট Hello World program:\n\n#include <stdio.h>\nint main(void) {\n    printf(\"Hello, Aurora!\\n\");\n    return 0;\n}\n\nএই sample-টি শুধু interface পরীক্ষা করার জন্য। Demo Mode-এ আমি তোমার code বুঝে নিজে থেকে নতুন সমাধান তৈরি করতে পারি না।";
+  }
+
+  if (/বাংলা|bengali|translate|অনুবাদ/.test(text)) {
+    return "অবশ্যই — Aurora interface Bengali ও English message পাঠাতে পারে।\n\nDemo Mode-এ আমি কিছু নির্দিষ্ট sample reply দিতে পারি, কিন্তু পূর্ণ অনুবাদ বা স্বাভাবিক multi-turn AI conversation এখনও চালু নয়।";
+  }
+
+  return `তোমার message Aurora Demo-তে পৌঁছেছে:\n“${message.slice(0, 260)}${message.length > 260 ? "…" : ""}”\n\nDemo Mode সফলভাবে চলছে। এটি একটি local, rule-based sample; কোনো live AI model ব্যবহার করছে না এবং OpenAI API credit খরচ করছে না।\n\nTry these sample prompts:\n• “Hello Aurora, introduce yourself in Bengali”\n• “Teach me a mathematics example”\n• “Show me a C programming example”`;
+}
+
+export async function POST(request: Request) {
   let body: unknown;
   try {
     body = await request.json();
@@ -80,13 +100,31 @@ export async function POST(request: Request) {
     );
   }
 
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  if (!latestUserMessage) {
+    return NextResponse.json({ error: "A user message is required." }, { status: 400 });
+  }
+
+  // Demo mode is intentionally local and does not call OpenAI or use API credits.
+  if (process.env.AURORA_DEMO_MODE === "true") {
+    return NextResponse.json({
+      reply: getDemoReply(latestUserMessage.content),
+      demoMode: true
+    });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json(
+      {
+        error:
+          "Aurora is not connected yet. Add OPENAI_API_KEY in your hosting environment, then restart or redeploy."
+      },
+      { status: 503 }
+    );
+  }
+
   try {
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
-    if (!latestUserMessage) {
-      return NextResponse.json({ error: "A user message is required." }, { status: 400 });
-    }
-
     const inputModeration = await client.moderations.create({
       model: "omni-moderation-latest",
       input: latestUserMessage.content
