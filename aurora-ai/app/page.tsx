@@ -46,8 +46,8 @@ export default function Home() {
 
     fetch("/api/health")
       .then((response) => response.json())
-      .then((data) => setConfigured(Boolean(data.configured)))
-      .catch(() => setConfigured(false));
+      .then((data) => setServiceMode(data.demoMode ? "demo" : data.configured ? "live" : "setup"))
+      .catch(() => setServiceMode("setup"));
   }, []);
 
   useEffect(() => {
