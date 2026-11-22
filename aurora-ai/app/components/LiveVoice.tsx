@@ -43,6 +43,11 @@ export default function LiveVoice() {
   async function startVoice() {
     if (connectingRef.current || status === "connected") return;
 
+    const approved = window.confirm(
+      "Live Voice uses the paid OpenAI Realtime API and may create usage charges. Continue only when the account owner and a parent or guardian have approved API use and a spending limit is set. Start a voice session?"
+    );
+    if (!approved) return;
+
     if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) {
       setStatus("error");
       setMessage("This browser does not support the required microphone or WebRTC features. Try a recent version of Chrome or Edge.");
