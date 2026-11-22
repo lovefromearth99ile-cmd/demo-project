@@ -1,5 +1,7 @@
 "use client";
 
+import LiveVoice from "./components/LiveVoice";
+
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 
 type Message = {
@@ -165,9 +167,10 @@ export default function Home() {
         <header className="topbar">
           <div className="breadcrumb"><span>Workspace</span><b>/</b><strong>New conversation</strong></div>
           <div className="top-actions">
+            <LiveVoice />
             <div className={`connection ${serviceMode === "live" ? "online" : serviceMode === "demo" ? "demo" : serviceMode === "setup" ? "offline" : ""}`}>
               <span className="connection-dot" />
-              {serviceMode === "checking" ? "Checking connection" : serviceMode === "demo" ? "Demo mode · no API usage" : serviceMode === "live" ? "AI connected" : "Setup required"}
+              {serviceMode === "checking" ? "Checking connection" : serviceMode === "demo" ? "Demo chat · Live Voice uses paid API" : serviceMode === "live" ? "AI connected" : "Setup required"}
             </div>
             <a className="github-link" href="https://github.com/lovefromearth99ile-cmd/demo-project/tree/main/aurora-ai" target="_blank" rel="noreferrer">Project ↗</a>
           </div>
