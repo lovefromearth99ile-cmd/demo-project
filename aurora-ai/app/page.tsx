@@ -194,7 +194,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="message-list">
-              <div className="thread-heading"><span className="thread-orb">✳</span><div><strong>Your conversation</strong><small>Just between you and Aurora</small></div></div>
+              <div className="thread-heading"><span className="thread-orb">✳</span><div><strong>Your conversation</strong><small>History is saved in this browser</small></div></div>
               {messages.map((message) => (
                 <article className={`message-row ${message.role}`} key={message.id}>
                   {message.role === "assistant" && <div className="message-avatar">✳</div>}
@@ -232,7 +232,7 @@ export default function Home() {
               </button>
             </div>
           </form>
-          <p className="disclaimer">Aurora can make mistakes. Check important information.</p>
+          <p className="disclaimer">Messages are sent to OpenAI to generate replies. Avoid sharing sensitive personal information.</p>
         </div>
       </section>
     </main>
