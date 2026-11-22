@@ -235,7 +235,7 @@ export default function Home() {
               </button>
             </div>
           </form>
-          <p className="disclaimer">{serviceMode === "demo" ? "Demo Mode uses sample replies only; no live AI model or API credits are used." : "Messages are sent to OpenAI to generate replies. Avoid sharing sensitive personal information."}</p>
+          <p className="disclaimer">{serviceMode === "demo" ? "Text chat is using sample replies. Starting Live Voice uses the paid Realtime API." : "Messages are sent to OpenAI to generate replies. Avoid sharing sensitive personal information."}</p>
         </div>
       </section>
     </main>
