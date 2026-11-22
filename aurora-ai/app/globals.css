@@ -60,7 +60,7 @@ button { color: inherit; }
 .connection { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #9b9cac; }
 .connection-dot { width: 6px; height: 6px; border-radius: 50%; background: #b5a5ff; box-shadow: 0 0 10px #a998ff77; }
 .connection.online .connection-dot { background: #83d5b8; box-shadow: 0 0 10px #83d5b877; }
-.connection.offline .connection-dot { background: #d4a46b; box-shadow: 0 0 10px #d4a46b77; }
+.connection.offline .connection-dot { background: #d4a46b; box-shadow: 0 0 10px #d4a46b77; }\n.connection.demo .connection-dot { background: #e5bd73; box-shadow: 0 0 10px #e5bd7377; }\n.connection.demo { color: #dfc18a; }
 .github-link { font-size: 10px; text-decoration: none; color: #b4a8f4; padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; }
 .github-link:hover { background: rgba(169, 152, 255, .1); }
 .conversation { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 920px; margin: 0 auto; padding: 35px 36px 12px; }
